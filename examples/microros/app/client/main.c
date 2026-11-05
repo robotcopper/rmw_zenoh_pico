@@ -16,6 +16,7 @@
 
 #include <rcl/rcl.h>
 #include <rcl/error_handling.h>
+#include <rcl/version.h>
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 
@@ -67,7 +68,11 @@ void client_callback(const void * msg) {
 #endif
 }
 
+#if RCL_VERSION_GTE(10, 4, 0)
+void timer_callback(rcl_timer_t * timer, int64_t last_call_time, uintptr_t user_data) {
+#else
 void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
+#endif
   (void) last_call_time;
 
   if (timer != NULL) {
@@ -148,11 +153,12 @@ int main(int argc, const char * argv[])
 
   // create timer
   const unsigned int timer_timeout = 1000;
-  RCCHECK(rclc_timer_init_default(
+  RCCHECK(rclc_timer_init_default2(
 	    &timer,
 	    &support,
 	    RCL_MS_TO_NS(timer_timeout),
-	    timer_callback));
+	    timer_callback,
+	    true));
 
   RCCHECK(rclc_executor_add_timer(&executor, &timer));
 
