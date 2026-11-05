@@ -618,3 +618,25 @@ rmw_send_response(
 
   return ret == _Z_RES_OK ?  RMW_RET_OK : RMW_RET_ERROR;
 }
+
+#if __has_include(<rmw/get_service_endpoint_info.h>)
+rmw_ret_t
+rmw_get_servers_info_by_service(
+  const rmw_node_t * node,
+  rcutils_allocator_t * allocator,
+  const char * service_name,
+  bool no_mangle,
+  rmw_service_endpoint_info_array_t * servers_info)
+{
+  RMW_ZENOH_FUNC_ENTRY(node);
+
+  (void)node;
+  (void)allocator;
+  (void)service_name;
+  (void)no_mangle;
+  (void)servers_info;
+  RMW_ZENOH_LOG_INFO(
+    "Function not available");
+  return RMW_RET_UNSUPPORTED;
+}
+#endif

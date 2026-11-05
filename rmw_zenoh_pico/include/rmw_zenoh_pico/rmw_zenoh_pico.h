@@ -38,6 +38,9 @@
 #include <rmw/names_and_types.h>
 #include <rmw/get_network_flow_endpoints.h>
 #include <rmw/get_topic_endpoint_info.h>
+#if __has_include(<rmw/get_service_endpoint_info.h>)
+#include <rmw/get_service_endpoint_info.h>
+#endif
 
 #include <rosidl_runtime_c/message_type_support_struct.h>
 

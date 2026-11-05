@@ -421,3 +421,25 @@ rmw_ret_t rmw_service_server_is_available(
   RMW_ZENOH_LOG_INFO("function not implemented");
   return RMW_RET_UNSUPPORTED;
 }
+
+#if __has_include(<rmw/get_service_endpoint_info.h>)
+rmw_ret_t
+rmw_get_clients_info_by_service(
+  const rmw_node_t * node,
+  rcutils_allocator_t * allocator,
+  const char * service_name,
+  bool no_mangle,
+  rmw_service_endpoint_info_array_t * clients_info)
+{
+  RMW_ZENOH_FUNC_ENTRY(node);
+
+  (void)node;
+  (void)allocator;
+  (void)service_name;
+  (void)no_mangle;
+  (void)clients_info;
+  RMW_ZENOH_LOG_INFO(
+    "Function not available");
+  return RMW_RET_UNSUPPORTED;
+}
+#endif
