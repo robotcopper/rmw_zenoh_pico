@@ -23,10 +23,10 @@ find_package(std_msgs REQUIRED)
 
 add_executable(${PROJECT_NAME} main.c)
 
-ament_target_dependencies(${PROJECT_NAME}
-  rcl
-  rclc
-  std_msgs
+target_link_libraries(${PROJECT_NAME}
+  rcl::rcl
+  rclc::rclc
+  ${std_msgs_TARGETS}
   )
 
 install(TARGETS ${PROJECT_NAME}

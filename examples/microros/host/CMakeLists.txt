@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-project(rmw_zenoh_demos_rclc)
+project(rmw_zenoh_demos_rclc LANGUAGES NONE)
 
 find_package(ament_cmake REQUIRED)
 

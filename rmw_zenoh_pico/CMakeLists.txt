@@ -151,8 +151,8 @@ target_link_libraries(${PROJECT_NAME}
 # Type support lock-up mechanism
 find_package(rosidl_typesupport_microxrcedds_c)
 if(rosidl_typesupport_microxrcedds_c_FOUND)
-  ament_target_dependencies(${PROJECT_NAME}
-    "rosidl_typesupport_microxrcedds_c"
+  target_link_libraries(${PROJECT_NAME}
+    rosidl_typesupport_microxrcedds_c::rosidl_typesupport_microxrcedds_c
 )
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
@@ -163,8 +163,8 @@ else()
 endif()
 
 if(rosidl_typesupport_microxrcedds_cpp_FOUND)
-  ament_target_dependencies(${PROJECT_NAME}
-    "rosidl_typesupport_microxrcedds_cpp"
+  target_link_libraries(${PROJECT_NAME}
+    rosidl_typesupport_microxrcedds_cpp::rosidl_typesupport_microxrcedds_cpp
 )
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
@@ -172,10 +172,9 @@ if(rosidl_typesupport_microxrcedds_cpp_FOUND)
 )
 endif()
 
-ament_target_dependencies(${PROJECT_NAME}
-  "zenohpico"
-  "rcutils"
-  "rmw"
+target_link_libraries(${PROJECT_NAME}
+  rcutils::rcutils
+  rmw::rmw
 )
 
 configure_rmw_library(${PROJECT_NAME})

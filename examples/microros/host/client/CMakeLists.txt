@@ -25,10 +25,10 @@ add_compile_options(-Wno-deprecated-declarations -Wno-unused-result)
 
 add_executable(${PROJECT_NAME} main.c)
 
-ament_target_dependencies(${PROJECT_NAME}
-  rcl
-  rclc
-  example_interfaces
+target_link_libraries(${PROJECT_NAME}
+  rcl::rcl
+  rclc::rclc
+  ${example_interfaces_TARGETS}
   )
 
 install(TARGETS ${PROJECT_NAME}
