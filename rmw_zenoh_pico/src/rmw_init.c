@@ -224,6 +224,12 @@ rmw_init_options_init(rmw_init_options_t * init_options, rcutils_allocator_t all
   init_options->enclave                   = "/";
   init_options->domain_id		  = 0;
   init_options->security_options	  = rmw_get_default_security_options();
+  init_options->discovery_options	  = rmw_get_zero_initialized_discovery_options();
+
+  rmw_ret_t ret = rmw_discovery_options_init(&(init_options->discovery_options), 0, &allocator);
+  if (RMW_RET_OK != ret) {
+    return ret;
+  }
 
   // This can be call before rmw_init()
   ZenohPicoTransportParams *params = zenoh_pico_generate_param(NULL);
@@ -232,7 +238,6 @@ rmw_init_options_init(rmw_init_options_t * init_options, rcutils_allocator_t all
     "Not available memory node",
     return RMW_RET_ERROR);
 
-  rmw_ret_t ret;
   if((ret = rmw_zenoh_pico_init_option(params)) != RMW_RET_OK){
     zenoh_pico_destroy_param(params);
     return ret;
@@ -258,22 +263,33 @@ rmw_init_options_copy(const rmw_init_options_t * src, rmw_init_options_t * dst)
     return RMW_RET_INVALID_ARGUMENT;
   }
 
-  memcpy(dst, src, sizeof(rmw_init_options_t));
-
   ZenohPicoTransportParams *src_contex = (ZenohPicoTransportParams *)src->impl;
   RMW_CHECK_FOR_NULL_WITH_MSG(
     src_contex,
     "source context is zero",
     return RMW_RET_INVALID_ARGUMENT);
 
+  rmw_init_options_t tmp;
+  memcpy(&tmp, src, sizeof(rmw_init_options_t));
+
+  rcutils_allocator_t allocator = src->allocator;
+  tmp.discovery_options = rmw_get_zero_initialized_discovery_options();
+  rmw_ret_t ret = rmw_discovery_options_copy(
+    &(src->discovery_options), &allocator, &(tmp.discovery_options));
+  if (RMW_RET_OK != ret) {
+    return ret;
+  }
+
   ZenohPicoTransportParams *dst_contex = zenoh_pico_generate_param(NULL);
-  RMW_CHECK_FOR_NULL_WITH_MSG(
-    dst_contex,
-    "falid new allocation option area",
-    return RMW_RET_ERROR);
+  if (NULL == dst_contex) {
+    RMW_SET_ERROR_MSG("falid new allocation option area");
+    ret = rmw_discovery_options_fini(&(tmp.discovery_options));
+    return RMW_RET_ERROR;
+  }
 
   zenoh_pico_clone_param(dst_contex, src_contex);
-  dst->impl = (rmw_init_options_impl_t *)dst_contex;
+  tmp.impl = (rmw_init_options_impl_t *)dst_contex;
+  memcpy(dst, &tmp, sizeof(rmw_init_options_t));
 
   return RMW_RET_OK;
 }
@@ -294,7 +310,7 @@ rmw_init_options_fini(rmw_init_options_t * init_options)
     init_options->impl = NULL;
   }
 
-  return RMW_RET_OK;
+  return rmw_discovery_options_fini(&(init_options->discovery_options));
 }
 
 static rmw_ret_t
